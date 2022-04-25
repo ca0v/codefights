@@ -1,2 +1,3 @@
 # codefights
-Repo of coding challenge solutions and notes
+
+Coding challenge solutions and notes
