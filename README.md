@@ -6,7 +6,7 @@ Coding challenge solutions and notes
 
 Find the median of the values in two separated sorted lists in O(log(n+m)) time.
 The nieve solution runs in O(n+m) time and incrementally scans both lists from the left until the midpoint is found.
-An advancement of that would be to replace the incremental search with a binary search.
+An advancement of that would be to replace the O(n) incremental search with a O(log(n)) binary search.
 
 INPUT: List 1 (l1) and List 2 (l2), both sorted
 OUTPUT: Median value
@@ -41,6 +41,23 @@ Assume: size(l1) >= size(l2)
 - Modify i by some amount
 - Repeat until the number to the left of the ith element is equal to the number to the right
 - This is a Log(n) \* Log(m) solution, which is the same as Log(n+m).
+
+We are looking for the location in list A and list B where, if the lists were merged, one of the following sequences would exist (j = i+1, n = m+1):
+
+| Sequence    | Scenario                            |
+| ----------- | ----------------------------------- |
+| Ai,Aj,Bm,Bn | All B items are right of the median |
+| Ai,Bm,Aj,Bn | Interleave near the median          |
+| Bm,Ai,Aj,Bn | Interleave near the median          |
+| Bm,Ai,Bn,Aj | Interleave near the median          |
+| Ai,Bm,Bn,Aj | Interleave near the median          |
+| Bm,Bn,Ai,Aj | All A items are right of the median |
+
+Let the combined size of both lists be L, we can define m to be equal to L - i.
+We modify i until we find interleave or until we determine no interleave is possible.
+
+Interleave found? The median can be computed from the 1st and 2nd items in this sorted list:
+[Ai,Aj,Bm,Bn].sort()
 
 ## Example 1
 
