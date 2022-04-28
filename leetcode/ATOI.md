@@ -1,5 +1,7 @@
 # ATOI
+
 My submitted solution did not use ParseInt, but the solution [here](./atoi.js) does.
+
 There is not much to say about it unless you restrict parseInt to a single character:
 
 ```
@@ -18,10 +20,12 @@ function myAtoi(s: string): number {
         if (result > max) break;
         i++;
     }
-      
+
     if (isNeg) result = -result;
     if (min > result) return min;
     if (max < result) return max;
     return result;
 };
 ```
+
+The key part to this solution is to shift the result left via the 10x multiplier.
