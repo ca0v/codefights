@@ -7,3 +7,4 @@
 - [Reverse Number](./leetcode/REVERSENUM.md)
 - [Zigzag](./leetcode/ZIGZAG.md)
 - [Easy Hike](./leetcode/EASYHIKE.md)
+- [Reverse List](./leetcode/REVERSENODES.md)

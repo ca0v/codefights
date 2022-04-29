@@ -3,13 +3,18 @@
 Given a topo map like this,
 
 ```
-4 2 3 2 3
+4 2 7 6 5
 5 5 6 4 4
 6 5 4 2 3
 ```
 
 Find a route from the top-left to the bottom-right that minimizes the maximum elevation change between neighboring cells.
 You can only move up/down and left/right.
+
+4->5->5->6->7->6->5->4->3 is one solution with an effort of 1
+4->5->6->5->5->6->7->6->5->4->3 is another solution with effort of 1
+
+All other paths have an effort > 1.
 
 ## Solution
 
@@ -21,10 +26,10 @@ C D
 ```
 
 There are two routes: ABD and ACD
-The cost of AB is Min(ACDB, abs(A-B))
-The cost of AC is Min(ABDC, abs(A-C))
-The cost of BD is abs(B-D)
-The cost of CD is abs(C-D)
+The cost of AB is abs(A-B), coming from D is not an option
+The cost of AC is abs(A-C), coming from D is not an option
+The cost of BD is abs(B-D), returning to A is not an option
+The cost of CD is abs(C-D), returning to A is not an option
 The cost of ABD is max(AB, BD)
 The cost of ACD is max(AC, CD)
 The cost of AD is max(ABD, ACD)
@@ -39,18 +44,15 @@ G H I
 
 The goal is now to get to `I` but it is possible we must pass through `D` so we must re-compute `AD`.
 
-Compute AI using BI and CI
-Compute BI using EI and DI
-Compute CI using DI and GI
-Compute EI using FI
-Compute DI using FI and HI
-Compute GI using HI
-Compute FI using DI (a cycle)
-Compute HI using DI (a cycle)
+Also, the formula for computing `D` is much harder because there are now 4 ways to solve `AD`.
+ABD, ABEFD, ACD, ACGHD
 
 ### Might be Correct
 
-I do not have an efficient solution. Presently I am doing this:
+I could only devise a responsive solution that recomputes neighbors each time a local minimum is found.
+I do not know how to put a time bound on it but I think it is at least O(n^3).
+
+Presently I am doing this,
 
 computeDistanceTo(A, B) =>
 get neighbors of A
