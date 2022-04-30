@@ -9,3 +9,4 @@
 - [Easy Hike](./leetcode/EASYHIKE.md)
 - [Reverse List](./leetcode/REVERSENODES.md)
 - [Sudoku](./leetcode/SUDOKU.md)
+- [UniquePaths](./leetcode/UNIQUEPATHS.md)
