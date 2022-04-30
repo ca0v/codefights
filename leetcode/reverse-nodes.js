@@ -1,41 +1,5 @@
-// solves https://leetcode.com/problems/reverse-nodes-in-k-group/
-// the copilot solution does not make sense, count is ignored
-
-function reverseNodesInKGroup(head, k) {
-  if (!head) return null;
-  if (k === 1) return head;
-  const fakeHead = { next: head };
-  let x = fakeHead;
-  let y = head;
-  let count = 0;
-
-  while (true) {
-    // find y, the node after the kth node
-    while (y && count++ < k) y = y.next;
-    if (!y) break; // nothing changes
-
-    // step 1 is to point the head to "last" node
-    let e = head;
-    let f = e.next;
-    e.next = y;
-
-    // step 2 is to reverse the k nodes
-    let g = f.next;
-    f.next = e;
-
-    // reverse remaining items
-    while (g != y) {
-      e = f;
-      f = g;
-      g = g.next;
-      f.next = e;
-    }
-
-    // final step
-    x.next = f;
-    x = f; // the node before y
-  }
-  return fakeHead.next;
+function log(...args) {
+  //console.log(...args);
 }
 
 function asLinkedList(arr) {
@@ -57,11 +21,57 @@ function asArray(head) {
   return result;
 }
 
-const tests = ["THIS IS A TEST".split("")];
+// solves https://leetcode.com/problems/reverse-nodes-in-k-group/
 
-tests.forEach((test) => {
-  const input = asLinkedList(test);
-  console.log(input);
-  const solution = reverseNodesInKGroup(input, 3);
-  console.log(test, asArray(solution));
-});
+function reverseNodesInKGroup(input, k) {
+  if (!input) return null;
+  if (k <= 1) return input;
+
+  // seek a 1st item beyond the items being reversed
+  let tail = input;
+  let count = 0;
+  while (tail && count++ < k) tail = tail.next;
+
+  // not enough items to reverse
+  if (count < k) return input;
+  count = k;
+
+  // step 1 is to point the 1st item to the tail
+  let node1 = input;
+  let node2 = node1.next;
+  node1.next = tail;
+  count--;
+
+  // step 2 is to point the 2nd item to the 1st item
+  let node3 = node2.next;
+  node2.next = node1;
+  count--;
+
+  // now reverse remaining items
+  while (count--) {
+    log(asArray(node2));
+    node1 = node2;
+    node2 = node3;
+    node3 = node3.next;
+    node2.next = node1;
+  }
+
+  // repeat for remainder of the list
+  input.next = reverseNodesInKGroup(tail, k);
+  return node2;
+}
+
+// result is "BCD"
+reverseNodesInKGroup(asLinkedList("ABCD".split("")), 2);
+
+const tests = ["A", "AB", "ABC", "ABCD", "ABCDE", "ABCDEF", "ABCDEFG"].map(
+  (v) => v.split("")
+);
+
+for (let k = 2; k <= 4; k++) {
+  tests.forEach((test) => {
+    const input = asLinkedList(test);
+    const solution = reverseNodesInKGroup(input, k);
+    console.log(k, test.join(""), "->", asArray(solution).join(""));
+  });
+}

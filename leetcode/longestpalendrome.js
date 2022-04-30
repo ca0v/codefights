@@ -51,7 +51,7 @@ function compute(str) {
     .sort((a, b) => b.length - a.length)[0];
 }
 
-// from https://www.akalin.com/longest-palindrome-linear-time
+// from https://www.akalin.com/longest-palindrome-linear-time, not correct?
 function fastLongestPalindromes(seq) {
   const seqLen = seq.length;
   const l = [];
