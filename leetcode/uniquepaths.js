@@ -1,12 +1,13 @@
 // unique-paths, this solution is twice as slow as the best submission.  Why?
+// The problem with my solution is it keeps trying to find the starting location.
 
 /**
  * @param {number[][]} grid
  * @return {number}
  */
-function uniquePathsIII(grid) {
+function uniquePathsIII(grid, start) {
   // find the starting cell
-  const start = findCell(grid, 1);
+  start = start || findCell(grid, 1);
   if (!start) return 0;
 
   // find empty neighbors
@@ -17,9 +18,7 @@ function uniquePathsIII(grid) {
   // if no empty neighbors, did we find a solution?
   if (!emptyCells.length) {
     // the neighbor is either the ending square or there is no solution
-    const finalCells = findNeighbors(grid, start).filter(
-      (cell) => grid[cell[0]][cell[1]] === 2
-    );
+    const finalCells = neighbors.filter((cell) => grid[cell[0]][cell[1]] === 2);
     if (!finalCells.length) return 0;
     // if the neighbor is an ending square but there are empty cells then there is no solution
     if (findCell(grid, 0)) return 0;
@@ -33,7 +32,7 @@ function uniquePathsIII(grid) {
   let solutions = 0;
   emptyCells.forEach((emptyCell) => {
     grid[emptyCell[0]][emptyCell[1]] = 1;
-    solutions += uniquePathsIII(grid);
+    solutions += uniquePathsIII(grid, emptyCell);
     grid[emptyCell[0]][emptyCell[1]] = 0;
   });
 
@@ -63,50 +62,58 @@ function findNeighbors(grid, cell) {
   return result;
 }
 
-// this is the fastest solution submitted
+const tests = [
+  [
+    [1, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 2],
+  ],
+];
+tests.forEach((test) => {
+  const solution = uniquePathsIII(JSON.parse(JSON.stringify(test)));
+  console.log(solution, fastUniquePathsIII(test));
+});
+
+/*
+ this is the fastest solution submitted, 2x faster than my solution
+ */
 /**
  * @param {number[][]} grid
  * @return {number}
  */
-var fastUniquePathsIII = function (grid) {
-  var output = 0;
-  var [seen, obsLen, startIdxs] = makeSeen(grid);
-  var maxSeen = grid.length * grid[0].length - 1 - obsLen;
-  var currSeen = 0;
-  var dfs = (i, j) => {
-    // ensure in boundary and not seen before
-    if (i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || seen[i][j])
-      return;
-    // ensure not an obstacle
-    if (grid[i][j] === -1) return;
-    // valid path check
-    if (grid[i][j] === 2 && maxSeen === currSeen) {
-      output++;
-      return;
-    } else if (grid[i][j] === 2 && maxSeen !== currSeen) {
-      return;
-    }
-    // valid empty space mark it as seen
-    seen[i][j] = true;
-    currSeen = currSeen + 1;
+function fastUniquePathsIII(grid) {
+  const [seen, obsticleCount, startCell] = makeSeen(grid);
+  const [cols, rows] = [grid.length, grid[0].length];
+  const maxSeen = cols * rows - 1 - obsticleCount;
+  let currSeen = 0;
 
-    dfs(i + 1, j);
-    dfs(i - 1, j);
-    dfs(i, j + 1);
-    dfs(i, j - 1);
+  const dfs = (i, j) => {
+    // ensure in boundary and not seen before
+    if (i < 0 || j < 0 || i >= cols || j >= rows || seen[i][j]) return 0;
+    // ensure not an obstacle
+    if (grid[i][j] === -1) return 0;
+    // valid path check
+    if (grid[i][j] === 2) return maxSeen === currSeen ? 1 : 0;
+
+    // this is a valid empty space so mark it as seen
+    seen[i][j] = true;
+    currSeen++;
+
+    const result =
+      dfs(i + 1, j) + dfs(i - 1, j) + dfs(i, j + 1) + dfs(i, j - 1);
 
     // back track
     seen[i][j] = false;
-    currSeen = currSeen - 1;
+    currSeen--;
+
+    return result;
   };
 
-  dfs(startIdxs[0], startIdxs[1]);
-
-  return output;
-};
+  return dfs(...startCell);
+}
 
 // returns an array that will contain the seen matrix, number of obstacles found and the starting point of the grid
-var makeSeen = (grid) => {
+function makeSeen(grid) {
   var s = [];
   var numberOfObstacles = 0;
   var start = [-1, -1];
@@ -120,7 +127,7 @@ var makeSeen = (grid) => {
   }
 
   return [s, numberOfObstacles, start];
-};
+}
 
 // 1) bruteforce to find the unique starting cell
 // 2) dfs with backtracking find all pall from starting to ending cell

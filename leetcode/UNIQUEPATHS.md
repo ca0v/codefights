@@ -1,6 +1,6 @@
 # Unique Paths
 
-Solves https://leetcode.com/problemset/all/
+Solves https://leetcode.com/problems/unique-paths-iii
 
 Here we have a starting and ending cell, cells we are not allowed to pass through and cells we must pass through.
 The goal is to count the number of unique paths from the starting cell to the ending cell.
