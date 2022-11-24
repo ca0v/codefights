@@ -2,47 +2,78 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
+	"math"
 )
 
-import "math"
-
-func celciusToFahrenheit(c float64) float64 {
-	return c*9/5 + 32
+var uom = map[string]float64 {
+	"m": 1.0,
+	"km": 1000,
+	"cm": 0.01,
+	"mm": 0.001,
+	"in": 2.54 / 100.0,
+	"ft": 12 * 2.54 / 100.0,
 }
 
-func add(x int, y int) int {
-	return 10 * x + y
+func polar(x float64, y float64) (radius float64, angle float64) {
+	radius = math.Sqrt(x*x + y*y)
+	angle = math.Atan2(y, x)
+	return
 }
 
-func swap(x, y int) (int, int) {
-	return y, x
+func cartesian(radius float64, angle float64) (float64, float64) {
+	return radius * math.Cos(angle), radius * math.Sin(angle)
 }
 
-// factored variable declarations
-var (
-	isIt = true
-	better bool
-	toBe   bool       = false
-	orNot  bool       = true
-)
+func fill(array *[]float64, value float64) {
+	for i := 0; i<len(*array); i++ {
+		(*array)[i] = value
+	}
+}
+
+func dump(array *[]float64) {
+	for _,v := range *array {
+		fmt.Println(v)
+	}
+}
 
 func main() {
-	// explicit variable declarations
-	var a, b bool = true, false
-	var c bool
+	var x = float64(10)
+	y := float64(20)
 
-	// implicit variable declarations
-	d := a != b
-	c = d
-	fmt.Println(a, b, c, isIt, better, toBe, orNot)
-	fmt.Println("Hello, world: %q", add(200, 22))
-	fmt.Println("Time:", time.Now())
-	fmt.Println("Random:", rand.Intn(100))
-	fmt.Println("Pi:", math.Pi)
-	fmt.Print("math", math.Sqrt(2))
-	fmt.Println("math", 1/math.Sin(math.Pi/4))
-	fmt.Println("Swap", add(swap(1, 2)))
-	fmt.Println("Celcius to Fahrenheit", celciusToFahrenheit(-40), celciusToFahrenheit(0), celciusToFahrenheit(100))
+	// grow x until it is not smaller than y
+	for x < y {
+		x++
+	}
+
+	if x > y {
+	}
+
+	// add x to y
+	for i := 0; i < int(x); i++ {
+		y++
+	}
+
+	fmt.Printf("x=%f y=%f\n", x, y)
+	y, x = x, y
+	fmt.Printf("x=%f y=%f\n", x, y)
+
+	x, y = 10, -10
+	{
+		var radius, angle = polar(float64(x), float64(y))
+		fmt.Printf("radius=%f angle=%f\n", radius, angle)
+		x, y = cartesian(radius, angle)
+		fmt.Printf("x=%f y=%f\n", x, y)
+	}
+
+	var slice []float64 = make([]float64, 10, 10)
+	fill(&slice, 1.0)
+	dump(&slice)
+
+	x = slice[0]
+	y = slice[1]
+	fmt.Printf("x=%f y=%f\n", x, y)
+
+	fmt.Printf("cm per foot: %f", uom["ft"]/uom["cm"])
+	fmt.Printf("foot/m: %f", uom["m"]/uom["ft"])
+
 }

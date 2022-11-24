@@ -6,3 +6,6 @@
 ## Run
 >`./index`
 
+## Unusual keywords
+`defer` is an clean alternative to a `finally` block
+`slices` are abstractions over `arrays`
